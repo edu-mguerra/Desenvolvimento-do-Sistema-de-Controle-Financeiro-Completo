@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.21.1",
+    "file-saver": "^2.0.5",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "sistema-financeiro",
+  "version": "1.0.0",
+  "main": "script.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle Financeiro</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+</head>
+
+<body>
+
+    <header>
+        <h1>Controle Financeiro</h1>
+    </header>
+
+    <section class="form-section">
+        <form>
+            <label for="forn">Fornecedor:</label>
+            <input type="text" id="forn" placeholder="Digite o Fornecedor">
+
+            <label for="cpj">Cpf ou Cnpj:</label>
+            <input type="text" id="cpj" placeholder="Digite o CPF ou CNPJ">
+
+            <label for="prod">Descrição:</label>
+            <input type="text" id="prod" placeholder="Nome do produto ">
+
+            <label for="date-compra">Data da Compra:</label>
+            <input type="date" id="date-compra" placeholder="Data da Compra do Produto">
+
+            <label for="date-comprovante">Data do Processamento:</label>
+            <input type="date" id="date-comprovante" placeholder="Data do Processamento">
+
+            <label for="sectorType">Setor:</label>
+            <select id="sectorType">
+                <option value="" disabled selected>Escolha o setor</option>
+                <option value="RH">RH</option>
+                <option value="T.I">T.I</option>
+                <option value="MANUTENÇÃO">MANUTENÇÃO</option>
+                <option value="AGRICOLA">AGRICOLA</option>
+                <option value="ADMINISTRAÇÃO">ADMINISTRAÇÃO</option>
+                <option value="FINANCEIRO">FINANCEIRO</option>
+                <option value="IMPOSTOS">IMPOSTOS</option>
+                <option value="AJA LPU-GRAVATÁ">AJA LPU-GRAVATÁ</option>
+            </select>
+
+            <label for="tipo_pagamento">Tipo de Pagamento:</label>
+            <select id="tipo_pagamento" name="tipo_pagamento">
+                <option value="" disabled selected>Tipo de Pagamento</option>
+                <option value="dinheiro">Dinheiro</option>
+                <option value="cartao_credito">Cartão de Crédito</option>
+                <option value="cartao_debito">Cartão de Débito</option>
+                <option value="transferencia">Transferência Bancária</option>
+                <option value="boleto">Boleto</option>
+                <option value="pix">PIX</option>
+            </select>
+
+            <div style="display: flex; gap: 20px;">
+
+                <div>
+
+                    <label for="nf">Nota Fiscal:</label>
+                    <div id="nota-fiscal-container">
+                        <input type="text" id="nota-fiscal-input" placeholder="Digite a Nota Fiscal">
+                        <button type="button" id="add-nota-fiscal">Adicionar Mais uma Nota</button>
+                        <ul id="lista-notas-fiscal"></ul>
+                    </div>
+                </div>
+                </br>
+                <div>
+
+                    <label for="ns">Nota de Serviço:</label>
+                    <div id="nota-servico-container">
+                        <input type="text" id="nota-servico-input" placeholder="Digite a Nota de Serviço">
+                        <button type="button" id="add-nota-servico">Adicionar Mais uma Nota</button>
+                        <ul id="lista-notas-servico"></ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <label for="amount">Valor:</label>
+            <input type="text" id="amount" class="money" placeholder="Valor do item">
+
+            <label for="type">Entrada / Saida :</label>
+            <select id="type">
+                <option value="" disabled selected>Entrada / Saida </option>
+                <option value="Entrada">Entrada</option>
+                <option value="Saída">Saída</option>
+            </select>
+
+            <div class="parc-check">
+                <label for="isInstallment">Parcelado:</label>
+                <input type="checkbox" id="isInstallment" class="isInstallment">
+            </div>
+
+            <div class="container">
+                <div id="installmentOptions" style="display: none;">
+                    <label for="numInstallments">Número de Parcelas:</label>
+                    <input type="number" id="numInstallments" value="1" min="1">
+                </div>
+
+                <div id="dynamicInstallments" style="display: none;">
+                    <h4>Parcelamento de:</h4>
+                    <span>1 mês</span> <input class="pcl" type="checkbox" value="1M"></br>
+                    <hr />
+                    <span>28 dias</span><input class="pcl" type="checkbox" value="28"></br>
+                    <hr />
+                    <span>14 dias</span> <input class="pcl" type="checkbox" value="14"></br>
+                    <hr />
+                    <span>7 Dias</span> <input class="pcl" type="checkbox" value="7"></br>
+                    <hr />
+                    <span>Selecione a data da Primeira Parcela</span><input id="data-parcela" type="date"
+                        placeholder="Data da Primeira Parcela" />
+                </div>
+
+                <div class="status">
+                    <div class="state">
+                        <span>A VISTA:</span>
+                        <input class="state-2" type="checkbox" value="A VISTA">
+                    </div>
+
+                    <div class="state">
+                        <span>PAGO:</span>
+                        <input class="state-2" type="checkbox" value="PAGO">
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="btnNew">Adicionar</button>
+        </form>
+    </section>
+
+    <section class="report-section">
+        <h2>Relatório Financeiro</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fornecedor</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Valor (R$)</th>
+                    <th>CPF/CNPJ </th>
+                    <th>Data da Compra</th>
+                    <th>Data do Processamento</th>
+                    <th>Data das Parcelas</th>
+                    <th>Colaborador Responsável pelo Pagamento</th>
+                    <th>Colaborador que Registrou</th>
+                    <th>Setor de Origem</th>
+                    <th>Forma de Pagamento</th>
+                    <th>Status</th>
+                    <th>Nota Fiscal</th>
+                    <th>Nota de Serviço</th>
+                    <th>Ação</th>
+                    <th>Deletar</th>
+                </tr>
+            </thead>
+            <tbody class="style">
+              
+            </tbody>
+        </table>
+
+        <div class="summary">
+            <div>
+                <button class="pdf">Exportar para PDF</button>
+                <button class="excel">Exportar para Excel</button>
+                <button class="clear">Apagar todos os Registros</button>
+
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 AJA Locadora - Todos os direitos reservados</p>
+    </footer>
+
+    <script src="script.js"></script>
+
+    
+    
+    
+
+
+
+
+
+
+    <script>
+        const excelButton = document.querySelector('.excel');
+        excelButton.addEventListener('click', () => {
+            const table = document.querySelector('table');
+            const wb = XLSX.utils.table_to_book(table, { sheet: 'Sheet1' });
+            XLSX.writeFile(wb, 'tabela.xlsx');
+        });
+    </script>
+</body>
+
+
+</html>
